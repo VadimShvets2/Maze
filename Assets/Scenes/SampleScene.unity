@@ -461,6 +461,7 @@ MonoBehaviour:
   Speed: 5
   Horizontal_Sensitive: 5
   Verticles_Sensitive: 5
+  Taking_Distance: 4
 --- !u!54 &330585549
 Rigidbody:
   m_ObjectHideFlags: 0

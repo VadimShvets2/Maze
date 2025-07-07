@@ -7,6 +7,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private float Horizontal_Sensitive = 1;
     [SerializeField] private float Verticles_Sensitive = 1;
     private Rigidbody Human;
+    [SerializeField] private float Taking_Distance; 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,6 +22,7 @@ public class Controller : MonoBehaviour
     {
        Move();
        Rotate();
+       Interact();
     }
 
     void Move()
@@ -51,5 +53,14 @@ public class Controller : MonoBehaviour
         Rotation.x += Vertical * -1;
         Rotation.y += Horizontal;
         transform.eulerAngles = Rotation;
+    }
+
+    void Interact()
+    {
+        RaycastHit hit;
+        Debug.DrawRay(transform.position, transform.forward * Taking_Distance, Color.red);
+       
+        
+            
     }
 }
