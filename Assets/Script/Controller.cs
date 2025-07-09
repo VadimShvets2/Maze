@@ -4,6 +4,7 @@ public class Controller : MonoBehaviour
 {
 
     [SerializeField] private float Speed;
+    [SerializeField] private float JumpForce;
     [SerializeField] private float Horizontal_Sensitive = 1;
     [SerializeField] private float Verticles_Sensitive = 1;
     private Rigidbody Human;
@@ -23,6 +24,7 @@ public class Controller : MonoBehaviour
        Move();
        Rotate();
        Interact();
+       Jump();
     }
 
     void Move()
@@ -45,6 +47,13 @@ public class Controller : MonoBehaviour
         }
     }
 
+    void Jump()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Human.AddForce(transform.up * JumpForce);
+        }
+    }
     void Rotate()
     {
         Vector3 Rotation = transform.eulerAngles;
@@ -64,3 +73,4 @@ public class Controller : MonoBehaviour
             
     }
 }
+

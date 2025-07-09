@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 6f69e84380a48644da208203c288f9a0
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304296
+  packageName: Low Poly Pistol Weapon Pack 2
+  packageVersion: 1.0
+  assetPath: Assets/Low Poly Pistol Weapon Pack 2/Models/Weapons/Pistol_G.fbx
+  uploadId: 714056
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -105,10 +112,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 304296
-  packageName: Low Poly Pistol Weapon Pack 2
-  packageVersion: 1.0
-  assetPath: Assets/Low Poly Pistol Weapon Pack 2/Models/Weapons/Pistol_G.fbx
-  uploadId: 714056
