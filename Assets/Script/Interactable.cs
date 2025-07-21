@@ -4,7 +4,7 @@ using DG.Tweening;
 public abstract class Interactable: MonoBehaviour
 {
     [SerializeField] private float Duration = 2;
-    public abstract void Interact();
+    public abstract void Interact(InventorSlot Slot);
 
     private void Start()
     {

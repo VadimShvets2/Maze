@@ -8,6 +8,7 @@ public class Inventor : MonoBehaviour
     private int LateSlot = 0;
     private Vector3 UnActive = new Vector3(1, 1, 1);
     private Vector3 Active = new Vector3(2, 2, 2);
+    [SerializeField] private float Taking_Distance;
     
     [SerializeField] List<InventorSlot> slots = new List<InventorSlot>();
     private void Scroll()
@@ -32,7 +33,7 @@ public class Inventor : MonoBehaviour
             ActiveSlot = Mathf.Clamp(ActiveSlot - 1, 0, slots.Count - 1);
             SelectSlot();
         }
-        print(ActiveSlot);
+        
     }
 
     private void Switch()
@@ -83,5 +84,22 @@ public class Inventor : MonoBehaviour
     {
       Scroll(); 
       Switch();
+      Interact();
+    }
+    void Interact()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            LayerMask Ray = LayerMask.GetMask("Interactable");
+            RaycastHit hit;
+            Debug.DrawRay(transform.position, transform.forward * Taking_Distance, Color.red);
+            if (Physics.Raycast(transform.position, transform.forward, out hit, Taking_Distance,Ray))
+            {
+            Interactable interactable = hit.collider.GetComponent<Interactable>();
+            interactable.Interact(slots[ActiveSlot]); 
+            }   
+        }
+        
     }
 }
+

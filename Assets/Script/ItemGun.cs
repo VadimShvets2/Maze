@@ -1,19 +1,20 @@
 using UnityEngine;
 
-public class Weapons : Interactable
+public class ItemGun : Item
 {
-    
-
-    public override void Interact(InventorSlot Slot)
+    protected override void Use()
     {
-        print("Interact");
+        
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    
-    // Update is called once per frame
-    
-    
+    void Start()
+    {
         
-    
-}
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}

@@ -23,7 +23,6 @@ public class Controller : MonoBehaviour
     {
        Move();
        Rotate();
-       Interact();
        Jump();
     }
 
@@ -62,15 +61,6 @@ public class Controller : MonoBehaviour
         Rotation.x += Vertical * -1;
         Rotation.y += Horizontal;
         transform.eulerAngles = Rotation;
-    }
-
-    void Interact()
-    {
-        RaycastHit hit;
-        Debug.DrawRay(transform.position, transform.forward * Taking_Distance, Color.red);
-       
-        
-            
     }
 }
 
