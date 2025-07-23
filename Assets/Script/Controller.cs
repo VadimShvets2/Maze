@@ -58,7 +58,7 @@ public class Controller : MonoBehaviour
         Vector3 Rotation = transform.eulerAngles;
         float Horizontal = Input.GetAxis("Mouse X") * Horizontal_Sensitive;
         float Vertical = Input.GetAxis("Mouse Y") * Verticles_Sensitive;
-        Rotation.x += Vertical * -1;
+        
         Rotation.y += Horizontal;
         transform.eulerAngles = Rotation;
     }

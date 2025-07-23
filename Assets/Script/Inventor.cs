@@ -69,14 +69,16 @@ public class Inventor : MonoBehaviour
 
     private void SelectSlot()
     {
-        slots[ActiveSlot].Transformation.localScale = Active; 
-        slots[LateSlot].Transformation.localScale = UnActive;
+        
+        
+        slots[LateSlot].Transformation.localScale = UnActive; 
+        slots[ActiveSlot].Transformation.localScale = Active;
     }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        SelectSlot();
     }
 
     // Update is called once per frame
@@ -90,7 +92,7 @@ public class Inventor : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            LayerMask Ray = LayerMask.GetMask("Interactable");
+            LayerMask Ray = 1 << 3;
             RaycastHit hit;
             Debug.DrawRay(transform.position, transform.forward * Taking_Distance, Color.red);
             if (Physics.Raycast(transform.position, transform.forward, out hit, Taking_Distance,Ray))

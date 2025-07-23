@@ -769,7 +769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 5
-  JumpForce: 2
+  JumpForce: 20
   Horizontal_Sensitive: 5
   Verticles_Sensitive: 5
   Taking_Distance: 4
@@ -1138,7 +1138,7 @@ Canvas:
   m_GameObject: {fileID: 553013240}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 330585545}
   m_PlaneDistance: 1
   m_PixelPerfect: 0
@@ -1380,7 +1380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7778961149720055044, guid: dfc4d87131163204eb41e8626f81e196, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -215.18
+      value: -214.73
       objectReference: {fileID: 0}
     - target: {fileID: 7778961149720055044, guid: dfc4d87131163204eb41e8626f81e196, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2567,7 +2567,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.3, y: 0.3, z: 0.6}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1946531295
 GameObject:

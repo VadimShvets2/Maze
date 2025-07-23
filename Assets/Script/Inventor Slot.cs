@@ -11,7 +11,7 @@ public class InventorSlot : MonoBehaviour
     public Image Item;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
        Transformation = GetComponent<RectTransform>(); 
     }
