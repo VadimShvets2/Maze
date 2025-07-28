@@ -12,6 +12,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private float Taking_Distance;
 
     private Rigidbody Human;
+    private Camera Character;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,6 +20,7 @@ public class Controller : MonoBehaviour
         Human = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        Character = Camera.main;
     }
 
     // Update is called once per frame
@@ -71,7 +73,8 @@ public class Controller : MonoBehaviour
 
         _playerRotation.y += Horizontal;
 
-        transform.rotation = Quaternion.Euler(_playerRotation.x, _playerRotation.y, 0f);
+        transform.rotation = Quaternion.Euler(transform.rotation.x, _playerRotation.y, 0f);
+        Character.transform.rotation = Quaternion.Euler(_playerRotation.x, Character.transform.rotation.y, 0f);
     }
 }
 
