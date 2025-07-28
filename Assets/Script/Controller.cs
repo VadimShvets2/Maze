@@ -29,6 +29,7 @@ public class Controller : MonoBehaviour
        Move();
        Rotate();
        Jump();
+       MaxSpeed();
     }
 
     void Move()
@@ -74,7 +75,15 @@ public class Controller : MonoBehaviour
         _playerRotation.y += Horizontal;
 
         transform.rotation = Quaternion.Euler(transform.rotation.x, _playerRotation.y, 0f);
-        Character.transform.rotation = Quaternion.Euler(_playerRotation.x, Character.transform.rotation.y, 0f);
+        Character.transform.rotation = Quaternion.Euler(_playerRotation.x, _playerRotation.y, 0f);
+    }
+
+    void MaxSpeed()
+    {
+        if (Human.angularVelocity.magnitude > 2f)
+        {
+            Human.angularVelocity = Human.angularVelocity.normalized * 2f;
+        }
     }
 }
 
