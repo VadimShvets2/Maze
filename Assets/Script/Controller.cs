@@ -2,13 +2,16 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-
-    [SerializeField] private float Speed;
-    [SerializeField] private float JumpForce;
+    [Header("Sensitive")]
     [SerializeField] private float Horizontal_Sensitive = 1;
     [SerializeField] private float Verticles_Sensitive = 1;
+
+    [Header("Movement")]
+    [SerializeField] private float Speed;
+    [SerializeField] private float JumpForce;
+    [SerializeField] private float Taking_Distance;
+
     private Rigidbody Human;
-    [SerializeField] private float Taking_Distance; 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -53,14 +56,22 @@ public class Controller : MonoBehaviour
             Human.AddForce(transform.up * JumpForce);
         }
     }
+
+    private Vector3 _playerRotation;
+
     void Rotate()
     {
-        Vector3 Rotation = transform.eulerAngles;
         float Horizontal = Input.GetAxis("Mouse X") * Horizontal_Sensitive;
         float Vertical = Input.GetAxis("Mouse Y") * Verticles_Sensitive;
-        
-        Rotation.y += Horizontal;
-        transform.eulerAngles = Rotation;
+
+        print(_playerRotation.x + Vertical * -1);
+
+        _playerRotation.x -= Vertical;
+        _playerRotation.x = Mathf.Clamp(_playerRotation.x, -90f, 90f);
+
+        _playerRotation.y += Horizontal;
+
+        transform.rotation = Quaternion.Euler(_playerRotation.x, _playerRotation.y, 0f);
     }
 }
 
