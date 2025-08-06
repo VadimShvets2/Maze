@@ -26,10 +26,13 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       Move();
-       Rotate();
-       Jump();
-       MaxSpeed();
+       if (GameSettings.Pause == false)
+       {
+           Move();
+           Rotate();
+           Jump();
+           MaxSpeed();
+       }
     }
 
     void Move()
