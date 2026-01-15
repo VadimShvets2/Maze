@@ -1,92 +1,118 @@
 using UnityEngine;
 
-public class Controller : MonoBehaviour
+public class Controller : MonoBehaviour 
 {
-    [Header("Sensitive")]
-    [SerializeField] private float Horizontal_Sensitive = 1;
-    [SerializeField] private float Verticles_Sensitive = 1;
-
     [Header("Movement")]
-    [SerializeField] private float Speed;
-    [SerializeField] private float JumpForce;
-    [SerializeField] private float Taking_Distance;
+    public float speed = 5f;
+    public float jumpHeight = 8f;
+    public float gravity = -20f;
 
-    private Rigidbody Human;
-    private Camera Character;
+    [Header("Mouse Look")]
+    public float mouseSensitivity = 2f;
+    public Camera cam;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Ground Check")]
+    public float groundCheckDistance = 0.3f;
+    public LayerMask groundMask = ~0; // Default to everything
+
+    private CharacterController controller;
+    private Vector3 velocity;
+    private float xRotation = 0f;
+
     void Start()
     {
-        Human = GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        Character = Camera.main;
     }
 
-    // Update is called once per frame
     void Update()
     {
-       if (GameSettings.Pause == false)
-       {
-           Move();
-           Rotate();
-           Jump();
-           MaxSpeed();
-       }
+        HandleMouseLook();
+        HandleMovement();
+        HandleJump();
     }
 
-    void Move()
+    void HandleMouseLook()
     {
-        if (Input.GetKey(KeyCode.W))
-        {
-            Human.AddForce(transform.forward * Speed);  
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            Human.AddForce(-transform.right * Speed);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            Human.AddForce(transform.right * Speed);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            Human.AddForce(-transform.forward * Speed); 
-        }
+        // Get mouse movement
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        
+        // Rotate player body left and right
+        transform.Rotate(Vector3.up * mouseX);
+        
+        // Rotate camera up and down
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        cam.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
     }
 
-    void Jump()
+    void HandleMovement()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            Human.AddForce(transform.up * JumpForce);
-        }
+        // Get WASD input
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+        
+        // Move relative to where player is facing
+        Vector3 move = transform.right * x + transform.forward * z;
+        controller.Move(move * speed * Time.deltaTime);
     }
 
-    private Vector3 _playerRotation;
-
-    void Rotate()
+    void HandleJump()
     {
-        float Horizontal = Input.GetAxis("Mouse X") * Horizontal_Sensitive;
-        float Vertical = Input.GetAxis("Mouse Y") * Verticles_Sensitive;
-
-        print(_playerRotation.x + Vertical * -1);
-
-        _playerRotation.x -= Vertical;
-        _playerRotation.x = Mathf.Clamp(_playerRotation.x, -90f, 90f);
-
-        _playerRotation.y += Horizontal;
-
-        transform.rotation = Quaternion.Euler(transform.rotation.x, _playerRotation.y, 0f);
-        Character.transform.rotation = Quaternion.Euler(_playerRotation.x, _playerRotation.y, 0f);
+        // Custom ground check - more reliable than controller.isGrounded
+        bool grounded = IsGrounded();
+        
+        // DEBUG: Remove this after fixing
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log($"SPACE PRESSED! Grounded: {grounded}, Velocity.y: {velocity.y}");
+        }
+        
+        // Apply gravity
+        velocity.y += gravity * Time.deltaTime;
+        
+        // Reset velocity when grounded
+        if (grounded && velocity.y < 0)
+        {
+            velocity.y = -2f; // Small negative value to keep grounded
+        }
+        
+        // Jump when Space is pressed and grounded - using KeyCode instead of Input.GetButtonDown
+        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            Debug.Log($"JUMPING! New velocity.y: {velocity.y}"); // DEBUG
+        }
+        
+        // Apply vertical movement
+        controller.Move(velocity * Time.deltaTime);
     }
 
-    void MaxSpeed()
+    bool IsGrounded()
     {
-        if (Human.angularVelocity.magnitude > 2f)
-        {
-            Human.angularVelocity = Human.angularVelocity.normalized * 2f;
-        }
+        // Cast a sphere from the bottom of the CharacterController
+        Vector3 spherePosition = new Vector3(
+            transform.position.x,
+            transform.position.y - (controller.height / 2f) - controller.center.y,
+            transform.position.z
+        );
+        return Physics.CheckSphere(spherePosition, groundCheckDistance, groundMask);
+    }
+
+    // Optional: Visualize the ground check in the editor
+    void OnDrawGizmosSelected()
+    {
+        if (controller == null) return;
+        
+        Vector3 spherePosition = new Vector3(
+            transform.position.x,
+            transform.position.y - (controller.height / 2f) - controller.center.y,
+            transform.position.z
+        );
+        
+        Gizmos.color = IsGrounded() ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(spherePosition, groundCheckDistance);
     }
 }
-

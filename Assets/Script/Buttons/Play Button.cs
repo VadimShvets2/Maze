@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 {
    protected override void OnClick()
    {
-       SceneManager.LoadScene("SampleScene");
+       SceneManager.LoadScene("Level1");
    }
 }
    
