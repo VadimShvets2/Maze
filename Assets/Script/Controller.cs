@@ -1,19 +1,23 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
 public class Controller : MonoBehaviour 
 {
     [Header("Movement")]
-    public float speed = 5f;
-    public float jumpHeight = 8f;
-    public float gravity = -20f;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float sprintSpeed = 15f;
+    [SerializeField] private float jumpHeight = 8f;
+    [SerializeField] private float gravity = -20f;
+    [SerializeField] private float fallMultiplier = 2.5f;
+    [SerializeField] private float lowJumpMultiplier = 2f;
 
     [Header("Mouse Look")]
-    public float mouseSensitivity = 2f;
-    public Camera cam;
+    [SerializeField] private float mouseSensitivity = 2f;
+    [SerializeField] private Camera cam;
 
     [Header("Ground Check")]
-    public float groundCheckDistance = 0.3f;
-    public LayerMask groundMask = ~0; // Default to everything
+    [SerializeField] private float groundCheckDistance = 0.3f;
+    [SerializeField] private LayerMask groundMask = ~0; // Default to everything
 
     private CharacterController controller;
     private Vector3 velocity;
@@ -56,21 +60,26 @@ public class Controller : MonoBehaviour
         
         // Move relative to where player is facing
         Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * speed * Time.deltaTime);
+        
+        float currentSpeed = Input.GetKey(KeyCode.LeftControl) ? sprintSpeed : speed;
+        controller.Move(move * currentSpeed * Time.deltaTime);
     }
 
     void HandleJump()
     {
-        // Custom ground check - more reliable than controller.isGrounded
+        // Custom ground check
         bool grounded = IsGrounded();
         
-        // DEBUG: Remove this after fixing
-        if (Input.GetKeyDown(KeyCode.Space))
+        // Apply gravity
+        if (velocity.y < 0)
         {
-            Debug.Log($"SPACE PRESSED! Grounded: {grounded}, Velocity.y: {velocity.y}");
+            velocity.y += gravity * (fallMultiplier - 1) * Time.deltaTime;
+        }
+        else if (velocity.y > 0 && !Input.GetButton("Jump"))
+        {
+            velocity.y += gravity * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
         
-        // Apply gravity
         velocity.y += gravity * Time.deltaTime;
         
         // Reset velocity when grounded
@@ -79,11 +88,10 @@ public class Controller : MonoBehaviour
             velocity.y = -2f; // Small negative value to keep grounded
         }
         
-        // Jump when Space is pressed and grounded - using KeyCode instead of Input.GetButtonDown
-        if (Input.GetKeyDown(KeyCode.Space) && grounded)
+        // Jump when button is pressed and grounded
+        if (Input.GetButtonDown("Jump") && grounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            Debug.Log($"JUMPING! New velocity.y: {velocity.y}"); // DEBUG
         }
         
         // Apply vertical movement
@@ -95,7 +103,7 @@ public class Controller : MonoBehaviour
         // Cast a sphere from the bottom of the CharacterController
         Vector3 spherePosition = new Vector3(
             transform.position.x,
-            transform.position.y - (controller.height / 2f) - controller.center.y,
+            transform.position.y + controller.center.y - (controller.height / 2f),
             transform.position.z
         );
         return Physics.CheckSphere(spherePosition, groundCheckDistance, groundMask);
@@ -108,7 +116,7 @@ public class Controller : MonoBehaviour
         
         Vector3 spherePosition = new Vector3(
             transform.position.x,
-            transform.position.y - (controller.height / 2f) - controller.center.y,
+            transform.position.y + controller.center.y - (controller.height / 2f),
             transform.position.z
         );
         

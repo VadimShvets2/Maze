@@ -6,9 +6,10 @@ public class Inventor : MonoBehaviour
 {
     private int ActiveSlot = 0;
     private int LateSlot = 0;
-    private Vector3 UnActive = new Vector3(1, 1, 1);
-    private Vector3 Active = new Vector3(2, 2, 2);
+    private Vector3 UnActive = new Vector3(2, 2, 2);
+    private Vector3 Active = new Vector3(2.5f, 2.5f, 2.5f);
     [SerializeField] private float Taking_Distance;
+    [SerializeField] private Transform Hand;
     
     [SerializeField] List<InventorSlot> slots = new List<InventorSlot>();
     private void Scroll()
@@ -69,10 +70,19 @@ public class Inventor : MonoBehaviour
 
     private void SelectSlot()
     {
-        
-        
-        slots[LateSlot].Transformation.localScale = UnActive; 
-        slots[ActiveSlot].Transformation.localScale = Active;
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (i == ActiveSlot)
+            {
+                slots[i].Transformation.localScale = Active;
+                if (slots[i].ConnectedItem != null) slots[i].ConnectedItem.SetActive(true);
+            }
+            else
+            {
+                slots[i].Transformation.localScale = UnActive;
+                if (slots[i].ConnectedItem != null) slots[i].ConnectedItem.SetActive(false);
+            }
+        }
     }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -92,16 +102,21 @@ public class Inventor : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
+            Transform rayOrigin = Camera.main ? Camera.main.transform : transform;
+            
             LayerMask Ray = 1 << 3;
             RaycastHit hit;
-            Debug.DrawRay(transform.position, transform.forward * Taking_Distance, Color.red);
-            if (Physics.Raycast(transform.position, transform.forward, out hit, Taking_Distance,Ray))
+            Debug.DrawRay(rayOrigin.position, rayOrigin.forward * Taking_Distance, Color.red);
+            
+            if (Physics.Raycast(rayOrigin.position, rayOrigin.forward, out hit, Taking_Distance, Ray))
             {
-            Interactable interactable = hit.collider.GetComponent<Interactable>();
-            interactable.Interact(slots[ActiveSlot]); 
+                if(hit.collider.TryGetComponent(out Interactable interactable))
+                {
+                    // Fallback if Hand is not assigned
+                    Transform targetHand = Hand != null ? Hand : rayOrigin;
+                    interactable.Interact(slots[ActiveSlot], targetHand); 
+                }
             }   
         }
-        
     }
 }
-
