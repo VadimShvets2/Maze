@@ -12,6 +12,7 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private Slider healthSlider;
+    [SerializeField] private DamageOverLay damageOverLay;
 
     private CharacterController characterController;
 
@@ -42,7 +43,10 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         
         UpdateUI();
-
+        if (damageOverLay != null)
+        {
+            damageOverLay.FlashDamage();
+        }
         if (currentHealth <= 0)
         {
             Die();
@@ -61,6 +65,11 @@ public class PlayerHealth : MonoBehaviour
         if (healthSlider != null)
         {
             healthSlider.value = currentHealth;
+        }
+
+        if (damageOverLay != null)
+        {
+            damageOverLay.SetOverLayIntesity(currentHealth / maxHealth);
         }
     }
 

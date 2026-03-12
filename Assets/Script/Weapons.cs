@@ -19,6 +19,12 @@ public class Weapons : Interactable
     [SerializeField] private Vector3 recoilRotationStrength = new Vector3(-10, 5, 0);
     [SerializeField] private float recoilDuration = 0.1f;
     
+    [Header("Projectile Settings")]
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform muzzlePoint;
+    [SerializeField] private float projectileForce = 1000f;
+
+    
     private bool isHeld = false;
     private float nextFireTime = 0f;
     private AudioSource audioSource;
@@ -86,7 +92,18 @@ public class Weapons : Interactable
         // Rotation Recoil
         DOTween.Punch(() => currentRecoilRotation, x => currentRecoilRotation = x, recoilRotationStrength, recoilDuration, 10, 1)
             .SetId("recoil");
+
+        // Projectile Instantiation
+        if (projectilePrefab && muzzlePoint)
+        {
+            GameObject bullet = Instantiate(projectilePrefab, muzzlePoint.position, muzzlePoint.rotation);
+            if (bullet.TryGetComponent(out Rigidbody rb))
+            {
+                rb.AddForce(muzzlePoint.forward * projectileForce);
+            }
+        }
     }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     
     // Update is called once per frame
@@ -95,3 +112,4 @@ public class Weapons : Interactable
         
     
 }
+
