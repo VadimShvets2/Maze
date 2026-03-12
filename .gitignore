@@ -84,3 +84,4 @@ crashlytics-build.properties
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
 .idea
+Animation/Library/PackageCache/com.unity.burst@973857688024/.Runtime/libburst-llvm-19.dylib
