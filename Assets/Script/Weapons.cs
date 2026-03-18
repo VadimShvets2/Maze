@@ -22,9 +22,18 @@ public class Weapons : Interactable
     [Header("Projectile Settings")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform muzzlePoint;
-    [SerializeField] private float projectileForce = 1000f;
+    [SerializeField] private float projectileForce = 5000f; // Increased for realism
+
+    [Header("VFX")]
+    [SerializeField] private GameObject muzzleFlashPrefab; // Assign your smoke/fire effect here
+    [SerializeField] private float muzzleFlashDuration = 0.1f;
+
+    [Header("Aim Alignment")]
+    [SerializeField] private float aimSmoothing = 15f;
+    [SerializeField] private float maxAimDistance = 100f;
 
     
+    private Quaternion currentAimRotation;
     private bool isHeld = false;
     private float nextFireTime = 0f;
     private AudioSource audioSource;
@@ -39,7 +48,8 @@ public class Weapons : Interactable
         // 1. Parent/Hold logic
         transform.SetParent(holder);
         transform.localPosition = holdPosition;
-        transform.localRotation = Quaternion.Euler(holdRotation);
+        currentAimRotation = Quaternion.Euler(holdRotation);
+        transform.localRotation = currentAimRotation;
         
         // 2. Disable Physics
         if (TryGetComponent(out Rigidbody rb)) rb.isKinematic = true;
@@ -59,8 +69,46 @@ public class Weapons : Interactable
         if (isHeld)
         {
             HandleShooting();
+            HandleAimAlignment();
+            
             transform.localPosition = holdPosition + currentRecoil;
-            transform.localRotation = Quaternion.Euler(holdRotation + currentRecoilRotation);
+            transform.localRotation = currentAimRotation * Quaternion.Euler(currentRecoilRotation);
+        }
+    }
+
+    private void HandleAimAlignment()
+    {
+        if (muzzlePoint == null || Camera.main == null) return;
+
+        // 1. Find the target point (crosshair hit point)
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Vector3 targetPoint = ray.GetPoint(maxAimDistance);
+        
+        // Raycast to find actual hit point, ignoring the player/gun if possible
+        // For now, a simple raycast
+        if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance))
+        {
+            targetPoint = hit.point;
+        }
+
+        // 2. Calculate the rotation required for the gun to point at that target
+        // We want muzzlePoint.forward to point at targetPoint
+        Vector3 dirToTarget = (targetPoint - muzzlePoint.position).normalized;
+        
+        if (dirToTarget != Vector3.zero)
+        {
+            Quaternion targetWorldRotation = Quaternion.LookRotation(dirToTarget);
+            
+            // We need to account for the muzzle's local offset within the weapon
+            // WeaponRotation * muzzleLocalRotation = targetWorldRotation
+            // WeaponRotation = targetWorldRotation * Inverse(muzzleLocalRotation)
+            Quaternion desiredWeaponRotation = targetWorldRotation * Quaternion.Inverse(muzzlePoint.localRotation);
+            
+            // Convert to local rotation relative to the holder (parent)
+            Quaternion desiredLocalRotation = Quaternion.Inverse(transform.parent.rotation) * desiredWeaponRotation;
+
+            // 3. Smoothly Lerp to the target rotation
+            currentAimRotation = Quaternion.Slerp(currentAimRotation, desiredLocalRotation, Time.deltaTime * aimSmoothing);
         }
     }
 
@@ -93,12 +141,22 @@ public class Weapons : Interactable
         DOTween.Punch(() => currentRecoilRotation, x => currentRecoilRotation = x, recoilRotationStrength, recoilDuration, 10, 1)
             .SetId("recoil");
 
+        // Muzzle Flash
+        if (muzzleFlashPrefab && muzzlePoint)
+        {
+            GameObject flash = Instantiate(muzzleFlashPrefab, muzzlePoint.position, muzzlePoint.rotation);
+            flash.transform.SetParent(muzzlePoint); // Follow the gun during recoil
+            Destroy(flash, muzzleFlashDuration);
+        }
+
         // Projectile Instantiation
         if (projectilePrefab && muzzlePoint)
         {
             GameObject bullet = Instantiate(projectilePrefab, muzzlePoint.position, muzzlePoint.rotation);
             if (bullet.TryGetComponent(out Rigidbody rb))
             {
+                // Set to continuous to prevent tunneling through walls at high speeds
+                rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
                 rb.AddForce(muzzlePoint.forward * projectileForce);
             }
         }

@@ -13,7 +13,7 @@ public abstract class Button : MonoBehaviour, IPointerDownHandler,  IPointerUpHa
             _animation.Kill();
         }
 
-        _animation = transform.DOScale(Size, factorTime).OnComplete(()=>OnClick());
+        _animation = transform.DOScale(Size, factorTime).SetUpdate(true).OnComplete(()=>OnClick());
     }
     void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
     {
@@ -21,7 +21,7 @@ public abstract class Button : MonoBehaviour, IPointerDownHandler,  IPointerUpHa
         {
             return;
         }
-        _animation = transform.DOScale(Size * factor, factorTime);
+        _animation = transform.DOScale(Size * factor, factorTime).SetUpdate(true);
     }
 
     protected Vector3 Size;

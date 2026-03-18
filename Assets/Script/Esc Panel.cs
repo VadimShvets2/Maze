@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EscPanel : MonoBehaviour
 {
-    [SerializeField] GameObject escPanel;
+    public GameObject escPanel;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -18,6 +18,7 @@ public class EscPanel : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             GameSettings.Pause = true;
+            Time.timeScale = 0f; // Pause time
         } 
     }
 }
