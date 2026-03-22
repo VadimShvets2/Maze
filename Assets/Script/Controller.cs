@@ -15,6 +15,8 @@ public class Controller : MonoBehaviour
     [SerializeField] private float jumpHeight = 3.2f;   // Higher burst
     [SerializeField] private float gravity = -95f;     // Massive gravity for fast rise/fall
     [SerializeField] private float airControl = 0.5f;
+    [Tooltip("Maximum horizontal speed the player can reach while airborne. Lower = floatier/slower, Higher = more responsive mid-air movement.")]
+    [SerializeField] private float airMoveSpeed = 6f;  // Max horizontal speed in the air
     [SerializeField] private float coyoteTime = 0.15f;
     [SerializeField] private float fallMultiplier = 1.25f; // Slight extra boost to fall
 
@@ -131,6 +133,9 @@ public class Controller : MonoBehaviour
         else if (isSprinting) targetSpeed = sprintSpeed;
         else if (isCrouching) targetSpeed = crouchSpeed;
 
+        // While airborne, cap horizontal speed to airMoveSpeed instead of the ground speed
+        if (!isGrounded) targetSpeed = airMoveSpeed;
+
         float currentAccel = isGrounded ? acceleration : acceleration * airControl;
         float currentFriction = isGrounded ? friction : friction * 0.1f;
 
@@ -212,6 +217,13 @@ public class Controller : MonoBehaviour
         coyoteTimer = 0f;
         if (isSliding) StopSlide();
         if (isCrouching) ToggleCrouch();
+    }
+
+    public void SetMovementSpeeds(float walk, float sprint, float jump)
+    {
+        walkSpeed = walk;
+        sprintSpeed = sprint;
+        jumpHeight = jump;
     }
 
     void ToggleCrouch()
