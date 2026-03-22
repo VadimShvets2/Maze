@@ -96,9 +96,9 @@ public class Controller : MonoBehaviour
 
     private void HandleInput()
     {
-        isSprinting = Input.GetKey(KeyCode.LeftControl) && Input.GetAxisRaw("Vertical") > 0.1f && !isCrouching && isGrounded;
+        isSprinting = Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0.1f && !isCrouching && isGrounded;
         
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.LeftControl))
         {
             if (isSprinting && isGrounded && !isSliding) 
                 StartSlide();
