@@ -95,4 +95,10 @@ public class PlayerHealth : MonoBehaviour
         // Reset health
         Heal(maxHealth);
     }
+
+    public void SetRespawnPosition(Vector3 newPosition)
+    {
+        respawnPosition = newPosition;
+        Debug.Log("Checkpoint Reached! New spawn point set: " + respawnPosition);
+    }
 }
