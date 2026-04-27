@@ -108,9 +108,9 @@ public class PlayerHealth : MonoBehaviour
         {
             SetRespawnPosition(other.transform.position);
         }
-        else if (other.CompareTag("DeathZone"))
-        {
-            Die(); // Instantly kill/respawn the player
-        }
+        //else if (other.CompareTag("DeathZone"))
+        //{
+            //Die(); // Instantly kill/respawn the player
+        //}
     }
 }
