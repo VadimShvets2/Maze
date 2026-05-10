@@ -290,6 +290,16 @@ public class Controller : MonoBehaviour
         {
             ApplyBounce(pad.BounceForce);
         }
+
+        // Check if the collided object's layer is part of the groundMask or explicitly the "Ground" layer
+        if (((1 << hit.gameObject.layer) & groundMask) != 0 || hit.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            PlayerHealth health = GetComponent<PlayerHealth>();
+            if (health != null)
+            {
+                health.Die();
+            }
+        }
     }
 
     void OnDrawGizmosSelected()
