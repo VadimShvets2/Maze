@@ -291,8 +291,8 @@ public class Controller : MonoBehaviour
             ApplyBounce(pad.BounceForce);
         }
 
-        // Check if the collided object's layer is part of the groundMask or explicitly the "Ground" layer
-        if (((1 << hit.gameObject.layer) & groundMask) != 0 || hit.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        // If the player falls and hits the main floor (Ground2), respawn them
+        if (hit.gameObject.layer == LayerMask.NameToLayer("Ground2"))
         {
             PlayerHealth health = GetComponent<PlayerHealth>();
             if (health != null)
